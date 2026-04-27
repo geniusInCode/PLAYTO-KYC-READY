@@ -1,0 +1,766 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* { box-sizing: border-box; }
+
+/* ══════════════════════════════════════
+   CSS CUSTOM PROPERTIES (THEME TOKENS)
+   Dark mode = default
+   Light mode = overridden by .light-mode on <html>
+══════════════════════════════════════ */
+:root {
+  --c-text:    #f5f5f7;
+  --c-sub:     rgba(255,255,255,0.6);
+  --c-muted:   rgba(255,255,255,0.45);
+  --c-dim:     rgba(255,255,255,0.28);
+  --c-faint:   rgba(255,255,255,0.12);
+  --c-card:    rgba(255,255,255,0.05);
+  --c-border:  rgba(255,255,255,0.09);
+  --c-input:   rgba(255,255,255,0.05);
+  --c-hover:   rgba(255,255,255,0.07);
+}
+.light-mode {
+  --c-text:    #0f172a;
+  --c-sub:     rgba(0,0,0,0.70);
+  --c-muted:   rgba(0,0,0,0.50);
+  --c-dim:     rgba(0,0,0,0.35);
+  --c-faint:   rgba(0,0,0,0.08);
+  --c-card:    rgba(255,255,255,0.88);
+  --c-border:  rgba(0,0,0,0.09);
+  --c-input:   rgba(255,255,255,0.95);
+  --c-hover:   rgba(0,0,0,0.05);
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #000;
+  color: var(--c-text);
+  margin: 0;
+  padding: 0;
+  /* Custom sleek default cursor */
+  cursor: url('data:image/svg+xml;utf8,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.5 3.5L18.5 11L11.5 13L9.5 20.5L5.5 3.5Z" fill="%233b82f6" stroke="white" stroke-width="1.5"/></svg>') 5 3, auto;
+}
+
+/* Custom glowing pointer cursor for interactive elements */
+a, button, [role="button"], select, input[type="file"], input[type="checkbox"], input[type="radio"], .cursor-pointer {
+  cursor: url('data:image/svg+xml;utf8,<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="8" fill="%233b82f6" fill-opacity="0.25" stroke="%233b82f6" stroke-width="1.5"/><circle cx="12" cy="12" r="3" fill="%23fff"/></svg>') 12 12, pointer !important;
+}
+
+select option {
+  background-color: #1e293b;
+  color: #f5f5f7;
+}
+
+.light-mode select option {
+  background-color: #ffffff;
+  color: #0f172a;
+}
+
+/* ══════════════════════════════════════
+   GLOBAL DARK ANIMATED BACKGROUND
+══════════════════════════════════════ */
+.page-bg {
+  min-height: 100vh;
+  position: relative;
+  background: #000;
+  overflow: hidden;
+}
+
+/* Mesh gradient layer */
+.page-bg::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 10%, rgba(59,130,246,0.16) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 85% 85%, rgba(99,102,241,0.14) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 40% at 50% 50%, rgba(14,165,233,0.07) 0%, transparent 50%),
+    #000;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Grid overlay */
+.page-bg::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* Floating orbs */
+.page-bg .orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.45;
+  z-index: 0;
+  pointer-events: none;
+  animation: orbFloat 9s ease-in-out infinite;
+}
+.page-bg .orb-1 {
+  width: 420px; height: 420px;
+  background: radial-gradient(circle, rgba(59,130,246,0.35), transparent 70%);
+  top: -130px; left: -110px;
+  animation-delay: 0s;
+}
+.page-bg .orb-2 {
+  width: 350px; height: 350px;
+  background: radial-gradient(circle, rgba(99,102,241,0.28), transparent 70%);
+  bottom: -90px; right: -90px;
+  animation-delay: -3s;
+}
+.page-bg .orb-3 {
+  width: 260px; height: 260px;
+  background: radial-gradient(circle, rgba(14,165,233,0.22), transparent 70%);
+  top: 45%; right: 12%;
+  animation-delay: -6s;
+}
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(18px, -28px) scale(1.04); }
+  66%       { transform: translate(-14px, 18px) scale(0.97); }
+}
+
+/* Content sits above the background layers */
+.page-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* ══════════════════════════════════════
+   CARDS (dark glass style)
+══════════════════════════════════════ */
+.card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow:
+    0 0 0 1px rgba(59,130,246,0.08),
+    0 20px 48px rgba(0,0,0,0.4);
+}
+
+/* ══════════════════════════════════════
+   BUTTONS
+══════════════════════════════════════ */
+.btn-primary {
+  @apply font-semibold px-5 py-2.5 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed;
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  color: #fff;
+  border: none;
+  box-shadow: 0 4px 16px rgba(59,130,246,0.3);
+  cursor: pointer;
+}
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 22px rgba(59,130,246,0.42);
+}
+
+.btn-secondary {
+  @apply font-semibold px-5 py-2.5 rounded-xl transition-all;
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.75);
+  border: 1px solid rgba(255,255,255,0.12);
+  cursor: pointer;
+}
+.btn-secondary:hover {
+  background: rgba(255,255,255,0.13);
+  color: #fff;
+}
+
+.btn-danger {
+  @apply font-semibold px-5 py-2.5 rounded-xl transition-all;
+  background: rgba(239,68,68,0.15);
+  color: #fca5a5;
+  border: 1px solid rgba(239,68,68,0.3);
+  cursor: pointer;
+}
+.btn-danger:hover {
+  background: rgba(239,68,68,0.25);
+}
+
+.btn-success {
+  @apply font-semibold px-5 py-2.5 rounded-xl transition-all;
+  background: rgba(16,185,129,0.15);
+  color: #6ee7b7;
+  border: 1px solid rgba(16,185,129,0.3);
+  cursor: pointer;
+}
+.btn-success:hover {
+  background: rgba(16,185,129,0.25);
+}
+
+/* ══════════════════════════════════════
+   FORM INPUTS
+══════════════════════════════════════ */
+.input {
+  width: 100%;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  color: #f5f5f7;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: all 0.2s;
+}
+.input::placeholder { color: rgba(255,255,255,0.25); }
+.input:focus {
+  border-color: rgba(59,130,246,0.55);
+  background: rgba(59,130,246,0.06);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+}
+select.input option {
+  background: #1e1e2e;
+  color: #f5f5f7;
+}
+
+.label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 6px;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+}
+
+/* ══════════════════════════════════════
+   BADGE
+══════════════════════════════════════ */
+.badge {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold;
+}
+
+/* ══════════════════════════════════════
+   ALERTS
+══════════════════════════════════════ */
+.alert-error {
+  background: rgba(239,68,68,0.12);
+  border: 1px solid rgba(239,68,68,0.28);
+  color: #fca5a5;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 0.85rem;
+}
+.alert-success {
+  background: rgba(16,185,129,0.12);
+  border: 1px solid rgba(16,185,129,0.28);
+  color: #6ee7b7;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 0.85rem;
+}
+
+/* ══════════════════════════════════════
+   SMOOTH THEME TRANSITION
+══════════════════════════════════════ */
+html {
+  transition: background-color 0.3s ease;
+}
+body {
+  transition: background-color 0.3s ease, color 0.2s ease;
+}
+
+/* ══════════════════════════════════════
+   LIGHT MODE — triggered by <html class="light-mode">
+══════════════════════════════════════ */
+.light-mode body {
+  background: #f0f4ff;
+  color: #0f172a;
+}
+.light-mode .page-bg {
+  background: #f0f4ff;
+}
+.light-mode .page-bg::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 10%, rgba(59,130,246,0.1) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 85% 85%, rgba(99,102,241,0.08) 0%, transparent 55%),
+    #f0f4ff;
+}
+.light-mode .page-bg::after {
+  background-image:
+    linear-gradient(rgba(0,0,0,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.035) 1px, transparent 1px);
+}
+.light-mode .page-bg .orb-1 {
+  background: radial-gradient(circle, rgba(59,130,246,0.12), transparent 70%);
+}
+.light-mode .page-bg .orb-2 {
+  background: radial-gradient(circle, rgba(99,102,241,0.10), transparent 70%);
+}
+.light-mode .page-bg .orb-3 {
+  background: radial-gradient(circle, rgba(14,165,233,0.08), transparent 70%);
+}
+
+/* Cards */
+.light-mode .card {
+  background: rgba(255,255,255,0.88);
+  border: 1px solid rgba(0,0,0,0.08);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.07), 0 0 0 1px rgba(59,130,246,0.05);
+  color: #0f172a;
+}
+
+/* Inputs */
+.light-mode .input {
+  background: rgba(255,255,255,0.95);
+  border: 1px solid rgba(0,0,0,0.14);
+  color: #0f172a;
+}
+.light-mode .input::placeholder { color: rgba(0,0,0,0.28); }
+.light-mode .input:focus {
+  border-color: rgba(59,130,246,0.55);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+}
+.light-mode select.input option {
+  background: #fff;
+  color: #0f172a;
+}
+
+/* Labels & text */
+.light-mode .label { color: rgba(0,0,0,0.52); }
+
+/* Buttons */
+.light-mode .btn-secondary {
+  background: rgba(0,0,0,0.06);
+  color: rgba(0,0,0,0.7);
+  border: 1px solid rgba(0,0,0,0.12);
+}
+.light-mode .btn-secondary:hover {
+  background: rgba(0,0,0,0.10);
+  color: #000;
+}
+
+/* Alerts */
+.light-mode .alert-error {
+  background: rgba(239,68,68,0.08);
+  border-color: rgba(239,68,68,0.22);
+  color: #b91c1c;
+}
+.light-mode .alert-success {
+  background: rgba(16,185,129,0.08);
+  border-color: rgba(16,185,129,0.22);
+  color: #065f46;
+}
+
+/* Navbar */
+.light-mode .navbar {
+  background: rgba(255,255,255,0.8) !important;
+  border-bottom: 1px solid rgba(0,0,0,0.08) !important;
+}
+.light-mode .nav-user-btn {
+  background: rgba(0,0,0,0.05) !important;
+  border: 1px solid rgba(0,0,0,0.10) !important;
+  color: rgba(0,0,0,0.7) !important;
+}
+.light-mode .nav-user-btn:hover {
+  background: rgba(0,0,0,0.09) !important;
+  color: #000 !important;
+}
+.light-mode .nav-logo-text { color: #0f172a !important; }
+.light-mode .nav-logo-sub  { color: rgba(0,0,0,0.4) !important; }
+.light-mode .nav-chevron   { color: rgba(0,0,0,0.35) !important; }
+.light-mode .nav-dropdown {
+  background: rgba(255,255,255,0.98) !important;
+  border: 1px solid rgba(0,0,0,0.09) !important;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12) !important;
+}
+.light-mode .nav-dropdown a,
+.light-mode .nav-dropdown button { color: rgba(0,0,0,0.65) !important; }
+.light-mode .nav-dropdown a:hover,
+.light-mode .nav-dropdown button:hover {
+  background: rgba(0,0,0,0.05) !important;
+  color: #000 !important;
+}
+.light-mode .nav-dropdown .logout-btn { color: #dc2626 !important; }
+.light-mode .nav-dropdown .logout-btn:hover {
+  background: rgba(239,68,68,0.07) !important;
+}
+.light-mode .nav-divider { background: rgba(0,0,0,0.07) !important; }
+.light-mode .nav-role-badge {
+  background: rgba(59,130,246,0.1) !important;
+  color: #1d4ed8 !important;
+  border-color: rgba(59,130,246,0.2) !important;
+}
+.light-mode .nav-avatar {
+  background: linear-gradient(135deg, #2563eb, #4f46e5) !important;
+}
+
+/* ══════════════════════════════════════
+   LIGHT MODE — CATCH-ALL TEXT OVERRIDE
+   Forces ALL text dark, overriding any remaining
+   hardcoded rgba(255,255,255,X) inline styles.
+   Color-coded elements are restored below.
+══════════════════════════════════════ */
+
+/* Force all generic text elements dark */
+.light-mode p,
+.light-mode h1, .light-mode h2, .light-mode h3,
+.light-mode h4, .light-mode h5, .light-mode h6,
+.light-mode span,
+.light-mode dt, .light-mode dd,
+.light-mode td, .light-mode th,
+.light-mode li,
+.light-mode label,
+.light-mode small {
+  color: #1e293b !important;
+}
+
+/* Restore purposely colored elements (status, success, error, accent) */
+/* Green (success / approved / uploaded) */
+.light-mode [style*="#6ee7b7"]  { color: #047857 !important; }
+.light-mode [style*="6ee7b7"]   { color: #047857 !important; }
+
+/* Red (error / rejected) */
+.light-mode [style*="#fca5a5"]  { color: #b91c1c !important; }
+.light-mode [style*="fca5a5"]   { color: #b91c1c !important; }
+
+/* Amber (warning / at risk) */
+.light-mode [style*="#fcd34d"]  { color: #92400e !important; }
+.light-mode [style*="fcd34d"]   { color: #92400e !important; }
+
+/* Blue (info / submitted) */
+.light-mode [style*="#93c5fd"]  { color: #1d4ed8 !important; }
+.light-mode [style*="93c5fd"]   { color: #1d4ed8 !important; }
+
+/* Purple (more info) */
+.light-mode [style*="#d8b4fe"]  { color: #7c3aed !important; }
+.light-mode [style*="d8b4fe"]   { color: #7c3aed !important; }
+
+/* Blue accent links / nav */
+.light-mode [style*="#818cf8"]  { color: #4338ca !important; }
+.light-mode [style*="818cf8"]   { color: #4338ca !important; }
+
+/* Buttons — keep correct text */
+.light-mode .btn-primary        { color: #fff !important; }
+.light-mode .btn-danger         { color: #b91c1c !important; }
+.light-mode .btn-success        { color: #047857 !important; }
+
+/* Table row hover in light mode */
+.light-mode tbody tr:hover { background: rgba(59,130,246,0.05) !important; }
+
+/* Document/item card rows */
+.light-mode [style*="rgba(255,255,255,0.04)"],
+.light-mode [style*="rgba(255,255,255,0.03)"] {
+  background: rgba(0,0,0,0.025) !important;
+  border-color: rgba(0,0,0,0.07) !important;
+}
+
+/* Table header row */
+.light-mode thead tr {
+  background: rgba(0,0,0,0.03) !important;
+  border-bottom: 1px solid rgba(0,0,0,0.07) !important;
+}
+
+/* Table row separator */
+.light-mode tbody tr {
+  border-bottom: 1px solid rgba(0,0,0,0.05) !important;
+}
+
+/* Card p-0 overflow table wrapper */
+.light-mode .card.p-0.overflow-hidden {
+  background: rgba(255,255,255,0.95) !important;
+  border: 1px solid rgba(0,0,0,0.08) !important;
+}
+
+/* ══════════════════════════════════════
+   NOTIFICATION ICON & DOT BASE STYLES
+══════════════════════════════════════ */
+.notif-icon {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 0.95rem;
+}
+.notif-icon-success { background: rgba(16,185,129,0.15); }
+.notif-icon-error   { background: rgba(239,68,68,0.15);  }
+.notif-icon-warning { background: rgba(245,158,11,0.15); }
+.notif-icon-info    { background: rgba(59,130,246,0.15); }
+.notif-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #3b82f6; flex-shrink: 0; margin-top: 6px;
+}
+
+/* ══════════════════════════════════════
+   LIGHT MODE — NOTIFICATION PANEL
+   Full override for all notif classes
+══════════════════════════════════════ */
+
+/* Panel container */
+.light-mode .notif-panel {
+  background: rgba(255,255,255,0.98) !important;
+  border: 1px solid rgba(0,0,0,0.09) !important;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15) !important;
+}
+
+/* Header */
+.light-mode .notif-header {
+  border-bottom: 1px solid rgba(0,0,0,0.07) !important;
+  background: rgba(248,250,252,0.98) !important;
+}
+.light-mode .notif-header-title {
+  color: #0f172a !important;
+}
+.light-mode .notif-header-count {
+  color: rgba(0,0,0,0.4) !important;
+}
+
+/* Item rows */
+.light-mode .notif-item {
+  border-bottom: 1px solid rgba(0,0,0,0.05) !important;
+}
+.light-mode .notif-item:hover {
+  background: rgba(0,0,0,0.025) !important;
+}
+.light-mode .notif-item.unread {
+  background: rgba(59,130,246,0.04) !important;
+}
+
+/* Message text */
+.light-mode .notif-msg {
+  color: #1e293b !important;
+}
+.light-mode .notif-time {
+  color: rgba(0,0,0,0.4) !important;
+}
+
+/* Empty state */
+.light-mode .notif-empty {
+  color: rgba(0,0,0,0.35) !important;
+}
+.light-mode .notif-empty-title {
+  color: rgba(0,0,0,0.5) !important;
+}
+.light-mode .notif-empty-sub {
+  color: rgba(0,0,0,0.35) !important;
+}
+
+/* Footer */
+.light-mode .notif-footer {
+  border-top: 1px solid rgba(0,0,0,0.06) !important;
+  background: rgba(248,250,252,0.95) !important;
+}
+.light-mode .notif-footer-text {
+  color: rgba(0,0,0,0.3) !important;
+}
+
+/* Clear button */
+.light-mode .notif-clear-btn {
+  color: rgba(0,0,0,0.35) !important;
+}
+.light-mode .notif-clear-btn:hover {
+  color: #b91c1c !important;
+}
+
+/* User dropdown in light mode (also a dropdown panel) */
+.light-mode .nav-dropdown {
+  background: rgba(255,255,255,0.98) !important;
+  border: 1px solid rgba(0,0,0,0.09) !important;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.13) !important;
+}
+
+/* ══════════════════════════════════════
+   LIGHT MODE — REGISTER PAGE (.reg-*)
+   All scoped classes need explicit override
+   because they live in a <style> tag not index.css
+══════════════════════════════════════ */
+.light-mode .reg-root {
+  background: #f0f4ff !important;
+}
+.light-mode .reg-root::before {
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(59,130,246,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 80%, rgba(99,102,241,0.08) 0%, transparent 55%),
+    #f0f4ff !important;
+}
+.light-mode .reg-root::after {
+  background-image:
+    linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px) !important;
+}
+/* Card */
+.light-mode .reg-card {
+  background: rgba(255,255,255,0.92) !important;
+  border: 1px solid rgba(0,0,0,0.08) !important;
+  box-shadow: 0 0 0 1px rgba(59,130,246,0.06), 0 24px 56px rgba(0,0,0,0.08) !important;
+}
+/* Headings */
+.light-mode .reg-header h1 {
+  color: #0f172a !important;
+}
+.light-mode .reg-header p {
+  color: rgba(0,0,0,0.45) !important;
+}
+/* Logo text */
+.light-mode .reg-logo-name {
+  color: #0f172a !important;
+}
+/* Labels */
+.light-mode .reg-label {
+  color: rgba(0,0,0,0.50) !important;
+}
+/* Inputs */
+.light-mode .reg-input {
+  background: rgba(255,255,255,0.95) !important;
+  border: 1px solid rgba(0,0,0,0.12) !important;
+  color: #0f172a !important;
+}
+.light-mode .reg-input::placeholder {
+  color: rgba(0,0,0,0.25) !important;
+}
+.light-mode .reg-input:focus {
+  border-color: rgba(59,130,246,0.55) !important;
+  background: #fff !important;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.12) !important;
+}
+/* Show/Hide toggle */
+.light-mode .reg-pw-toggle {
+  color: rgba(0,0,0,0.35) !important;
+}
+.light-mode .reg-pw-toggle:hover {
+  color: rgba(0,0,0,0.7) !important;
+}
+/* Divider */
+.light-mode .reg-divider::before,
+.light-mode .reg-divider::after {
+  background: rgba(0,0,0,0.08) !important;
+}
+.light-mode .reg-divider span {
+  color: rgba(0,0,0,0.3) !important;
+}
+/* Sign in row */
+.light-mode .reg-signin-row {
+  color: rgba(0,0,0,0.45) !important;
+}
+.light-mode .reg-signin-row a {
+  color: #3b82f6 !important;
+}
+/* Error */
+.light-mode .reg-error {
+  background: rgba(239,68,68,0.07) !important;
+  border-color: rgba(239,68,68,0.2) !important;
+  color: #b91c1c !important;
+}
+
+/* ══════════════════════════════════════
+   LIGHT MODE — LOGIN PAGE (.login-* / .lp-*)
+   Same approach for login scoped classes
+══════════════════════════════════════ */
+.light-mode .lp-root,
+.light-mode .login-root {
+  background: #f0f4ff !important;
+}
+.light-mode .lp-card,
+.light-mode .login-card {
+  background: rgba(255,255,255,0.92) !important;
+  border: 1px solid rgba(0,0,0,0.08) !important;
+  box-shadow: 0 24px 56px rgba(0,0,0,0.08) !important;
+}
+.light-mode .lp-label,
+.light-mode .login-label {
+  color: rgba(0,0,0,0.50) !important;
+}
+.light-mode .lp-input,
+.light-mode .login-input {
+  background: rgba(255,255,255,0.95) !important;
+  border: 1px solid rgba(0,0,0,0.12) !important;
+  color: #0f172a !important;
+}
+.light-mode .lp-input::placeholder,
+.light-mode .login-input::placeholder {
+  color: rgba(0,0,0,0.25) !important;
+}
+.light-mode .lp-header h1,
+.light-mode .login-header h1 {
+  color: #0f172a !important;
+}
+.light-mode .lp-header p,
+.light-mode .login-header p,
+.light-mode .lp-subtext,
+.light-mode .login-subtext {
+  color: rgba(0,0,0,0.45) !important;
+}
+.light-mode .lp-pw-toggle,
+.light-mode .login-pw-toggle {
+  color: rgba(0,0,0,0.35) !important;
+}
+.light-mode .lp-divider span,
+.light-mode .login-divider span {
+  color: rgba(0,0,0,0.30) !important;
+}
+.light-mode .lp-bottom-row,
+.light-mode .login-bottom-row {
+  color: rgba(0,0,0,0.45) !important;
+}
+.light-mode .lp-bottom-row a,
+.light-mode .login-bottom-row a {
+  color: #3b82f6 !important;
+}
+.light-mode .lp-error,
+.light-mode .login-error {
+  background: rgba(239,68,68,0.07) !important;
+  border-color: rgba(239,68,68,0.2) !important;
+  color: #b91c1c !important;
+}
+
+/* ══════════════════════════════════════
+   LIGHT MODE — CHANGE/RESET PASSWORD,
+   FORGOT PASSWORD (.fp-* / .cp-* / .rp-*)
+══════════════════════════════════════ */
+.light-mode .fp-root,
+.light-mode .cp-root,
+.light-mode .rp-root {
+  background: #f0f4ff !important;
+}
+.light-mode .fp-card,
+.light-mode .cp-card,
+.light-mode .rp-card {
+  background: rgba(255,255,255,0.92) !important;
+  border: 1px solid rgba(0,0,0,0.08) !important;
+}
+.light-mode .fp-label,
+.light-mode .cp-label,
+.light-mode .rp-label {
+  color: rgba(0,0,0,0.50) !important;
+}
+.light-mode .fp-input,
+.light-mode .cp-input,
+.light-mode .rp-input {
+  background: rgba(255,255,255,0.95) !important;
+  border: 1px solid rgba(0,0,0,0.12) !important;
+  color: #0f172a !important;
+}
+.light-mode .fp-input::placeholder,
+.light-mode .cp-input::placeholder,
+.light-mode .rp-input::placeholder {
+  color: rgba(0,0,0,0.25) !important;
+}
+.light-mode .fp-header h1,
+.light-mode .cp-header h1,
+.light-mode .rp-header h1 {
+  color: #0f172a !important;
+}
+.light-mode .fp-header p,
+.light-mode .cp-header p,
+.light-mode .rp-header p {
+  color: rgba(0,0,0,0.45) !important;
+}
+.light-mode .fp-back,
+.light-mode .cp-back {
+  color: rgba(0,0,0,0.45) !important;
+}
+.light-mode .fp-back:hover,
+.light-mode .cp-back:hover {
+  color: #0f172a !important;
+}
